@@ -10,7 +10,7 @@ const resolvers = require('../Resolvers')
 const rootQuery =`
   type Query {
     currentUser : User
-    getUserByFullName (name: String!) : User
+    getUserByFullName (name: String!) : [User]
   }
 
   type Mutation {

@@ -49,9 +49,9 @@ async function login ( username, password ) {
 
 async function getUserByFullName ( fullName ) {
   try {
-    const user = await User.findOne({ name: fullName })
+    const capitalizedName = fullName.replace(/(^| +)(.)/g, (_, spaces, characters) => spaces+characters.toUpperCase())
+    const user = await User.find({name: { $regex: '.*' + capitalizedName + '.*' } })
     if ( !user ) return _handleError('user not found')
-
     return user
   } catch (e) {
       _handleError(`There was an error retreiving user by full name: ==> ${e}`)
@@ -83,7 +83,6 @@ async function addPayWay ( fineId, payWay ) {
   try {
      await Fine.findOneAndUpdate({ _id: fineId }, { payWay }, { upsert: true })
      const fineUpdated = await Fine.findOne({ _id: fineId })
-     console.log(fineUpdated)
      return fineUpdated
   } catch (e) {
     _handleError(`There was an error updating the fine: ===> ${e}`)
