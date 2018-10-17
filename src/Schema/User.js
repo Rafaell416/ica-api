@@ -1,6 +1,7 @@
 const User = `
   type User {
-    _id: ID
+    _id: ID!
+    id: String
     username: String!
     name: String
     jwt: String
@@ -12,6 +13,7 @@ const User = `
     name: String!
     password: String!
     role: String!
+    id: String
   }
 `
 

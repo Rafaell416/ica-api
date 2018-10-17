@@ -10,11 +10,15 @@ const resolvers = require('../Resolvers')
 const rootQuery =`
   type Query {
     currentUser : User
+    getUserByFullName (name: String!) : User
   }
 
   type Mutation {
-    signup (user: newUser) : User
+    signup (user: newUser!) : User
     login (username: String!, password: String!) : User
+    createFine (studentId: String!, fine: newFine!) : Fine
+    deleteFine (fineId: String!) : Fine
+    addPayWay (fineId: String!, payWay: String!) : Fine
   }
 `
 

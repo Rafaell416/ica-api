@@ -9,7 +9,7 @@ const Fine = new Schema({
   date: {type: String, required: true},
   description: {type: String, required: true},
   studentId: {type: String, required: true},
-  payWay: {type: String, required: true}
+  payWay: { type: String }
 })
 
 module.exports = Mongoose.model('Fine', Fine)
