@@ -2,6 +2,7 @@
 
 const User = require('../db/Models/User')
 const Fine = require('../db/Models/Fine')
+const Student = require('../db/Models/Student')
 const bcrypt = require('bcrypt')
 const config = require('../../config')
 const jwt = require('jsonwebtoken')
@@ -11,12 +12,12 @@ const JWT_SECRET = process.env.JWT_SECRET || config.JWT_SECRET
 
 function _handleError ( error ) {
     throw new Error(error)
+    return []
   }
 
 async function signup ( user ) {
   try {
     const { username, name, password, role } = user
-
     const existingUser = await User.findOne({ username })
     if ( existingUser ) return _handleError('This username already exist')
 
@@ -47,14 +48,35 @@ async function login ( username, password ) {
   }
 }
 
-async function getUserByFullName ( fullName ) {
+async function getStudentByFullName ( fullName ) {
   try {
     const capitalizedName = fullName.replace(/(^| +)(.)/g, (_, spaces, characters) => spaces+characters.toUpperCase())
-    const user = await User.find({name: { $regex: '.*' + capitalizedName + '.*' } })
-    if ( !user ) return _handleError('user not found')
-    return user
+    const user = await Student.find({name: { $regex: '.*' + capitalizedName + '.*' } })
+    if ( !user ) return _handleError('student not found')
+    return user[0]
   } catch (e) {
       _handleError(`There was an error retreiving user by full name: ==> ${e}`)
+  }
+}
+
+async function createStudent ( student ) {
+  try {
+    const { name, id, course } = student
+    const capitalizedName = name.replace(/(^| +)(.)/g, (_, spaces, characters) => spaces+characters.toUpperCase())
+    const studentToCreate = new Student({ name, id, course })
+    const studentCreated = await studentToCreate.save()
+    return studentCreated
+  } catch (e) {
+      _handleError(`There was an error creating student: ==> ${e}`)
+  }
+}
+
+async function getStudentFines ( studentId ) {
+  try {
+    const fines = await Fine.find({ studentId })
+    return fines
+  } catch (e) {
+      _handleError(`There was an error getting student fines: ==> ${e}`)
   }
 }
 
@@ -92,8 +114,10 @@ async function addPayWay ( fineId, payWay ) {
 module.exports = {
   signup,
   login,
-  getUserByFullName,
+  createStudent,
+  getStudentByFullName,
+  getStudentFines,
   createFine,
   deleteFine,
-  addPayWay
+  addPayWay,
 }
